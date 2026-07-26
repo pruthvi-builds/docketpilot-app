@@ -1,0 +1,81 @@
+// DocketPilot data model
+// SQLite by default (zero setup). For production, point DATABASE_URL at Postgres
+// and change provider to "postgresql" — the schema itself needs no other changes.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite has no native enum support, so roles are validated in application
+// code (lib/auth.ts, API routes) against "ADMIN" | "ATTORNEY" | "STAFF".
+model Firm {
+  id                 String   @id @default(cuid())
+  name               String
+  plan               String   @default("trial") // trial | active | canceled
+  paymentCustomerId     String? // Dodo Payments customer_id
+  paymentSubscriptionId String? // Dodo Payments subscription_id
+  reminderDaysBefore String   @default("30,14,7,1") // comma-separated day offsets
+  createdAt          DateTime @default(now())
+
+  users   User[]
+  cases   Case[]
+  activity ActivityLog[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ATTORNEY")
+  firmId       String
+  firm         Firm     @relation(fields: [firmId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model Case {
+  id         String   @id @default(cuid())
+  firmId     String
+  firm       Firm     @relation(fields: [firmId], references: [id])
+  clientName String
+  caseNumber String?
+  court      String?
+  caseType   String?
+  status     String   @default("OPEN") // OPEN | CLOSED
+  createdAt  DateTime @default(now())
+
+  deadlines Deadline[]
+
+  @@index([firmId])
+}
+
+model Deadline {
+  id                String   @id @default(cuid())
+  caseId            String
+  case              Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  type              String   // Filing Deadline | Hearing Date | Statute of Limitations | Discovery Cutoff | Other
+  dueDate           DateTime
+  notes             String?
+  completed         Boolean  @default(false)
+  remindersSentDays String   @default("") // comma-separated day offsets already emailed
+  createdAt         DateTime @default(now())
+
+  @@index([caseId])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  firmId    String
+  firm      Firm     @relation(fields: [firmId], references: [id])
+  userId    String?
+  action    String   // e.g. "case.created", "deadline.updated", "reminder.sent"
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([firmId])
+}
