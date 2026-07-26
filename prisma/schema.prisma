@@ -1,18 +1,19 @@
-// DocketPilot data model
-// SQLite by default (zero setup). For production, point DATABASE_URL at Postgres
-// and change provider to "postgresql" — the schema itself needs no other changes.
+// DocketPilot data model — Postgres (works locally with a free Neon/Supabase/
+// Vercel Postgres instance, and is what production runs on since Vercel's
+// filesystem is ephemeral and can't hold a SQLite file across deploys).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// SQLite has no native enum support, so roles are validated in application
-// code (lib/auth.ts, API routes) against "ADMIN" | "ATTORNEY" | "STAFF".
+// Roles are validated in application code (lib/auth.ts, API routes) against
+// "ADMIN" | "ATTORNEY" | "STAFF" rather than a native DB enum, so switching
+// datasource providers (sqlite/postgresql/mysql) never requires a schema change here.
 model Firm {
   id                 String   @id @default(cuid())
   name               String

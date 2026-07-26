@@ -27,23 +27,24 @@ I did not create Dodo Payments/SMTP accounts or enter any credentials on your be
 
 ```bash
 npm install
-cp .env.example .env        # edit JWT_SECRET and CRON_SECRET at minimum
-npx prisma db push          # creates dev.db (SQLite) from the schema
+cp .env.example .env        # edit DATABASE_URL, JWT_SECRET and CRON_SECRET at minimum
+npx prisma db push          # creates the schema in your Postgres database
 npm run db:seed             # optional: seeds a demo firm
 npm run dev                 # http://localhost:3000
 ```
+
+Need a free Postgres instance for local dev? [Neon](https://neon.tech) gives you a connection string in under a minute.
 
 Seeded demo login (if you ran `db:seed`): `demo@docketpilot.app` / `password123`.
 
 ## Deploying
 
-- **Vercel** is the path of least resistance: push to a GitHub repo, import into Vercel, set the env vars from `.env.example` in the Vercel dashboard, and switch `DATABASE_URL` to a real Postgres instance (Vercel Postgres, Neon, Supabase, etc.) — the Prisma schema needs only `provider = "postgresql"` changed in `prisma/schema.prisma`, nothing else.
+- **Vercel** is the path of least resistance: push to a GitHub repo, import into Vercel, add a Postgres database (Vercel Postgres or the Neon integration — either one auto-injects `DATABASE_URL`), and set the remaining env vars from `.env.example` in the Vercel dashboard.
 - `vercel.json` already defines the daily reminder cron (`/api/cron/send-reminders` at 13:00 UTC). If you deploy elsewhere, use `scripts/run-reminders.ts` from any scheduler (crontab, GitHub Actions) instead.
-- SQLite is fine for local dev and even a single-server deploy, but won't survive Vercel's ephemeral filesystem across deploys — move to Postgres before real customers rely on it.
 
 ## Suggested next steps before cold-emailing prospects
 
-1. Swap SQLite for Postgres and deploy somewhere persistent.
+1. Deploy to Vercel with a real Postgres database attached.
 2. Wire up real SMTP + Dodo Payments keys.
 3. Run the landing page + a small batch of cold emails into solo/small-firm attorney lists (state bar directories) to validate willingness to pay before investing further — the pitch is already on the homepage (`app/page.tsx`).
 4. Nice-to-haves once validated: password reset flow, 2FA, Google/Outlook calendar sync (beyond one-off `.ics` downloads), mobile-friendly SMS reminders, per-user (not just per-firm) notification preferences.
