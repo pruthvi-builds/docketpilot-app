@@ -127,8 +127,10 @@ export const RULE_SETS: RuleSet[] = [
 ];
 
 export function addDays(dateStr: string, days: number): string {
-  const d = new Date(dateStr + "T00:00:00");
-  d.setDate(d.getDate() + days);
+  // Parse and mutate in UTC explicitly so the result doesn't shift by a day
+  // depending on the browser's local timezone offset.
+  const d = new Date(dateStr + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
 
