@@ -27,6 +27,7 @@ model Firm {
   cases   Case[]
   activity ActivityLog[]
   tasks   Task[]
+  documents Document[]
 }
 
 model User {
@@ -53,6 +54,7 @@ model Case {
 
   deadlines Deadline[]
   tasks     Task[]
+  documents Document[]
 
   @@index([firmId])
 }
@@ -94,6 +96,22 @@ model Task {
   dueDate   DateTime?
   done      Boolean   @default(false)
   createdAt DateTime  @default(now())
+
+  @@index([firmId])
+  @@index([caseId])
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  firmId      String
+  firm        Firm     @relation(fields: [firmId], references: [id])
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  filename    String
+  pathname    String   // Vercel Blob pathname, e.g. "documents/<caseId>/<cuid>-<filename>"
+  contentType String?
+  size        Int
+  uploadedAt  DateTime @default(now())
 
   @@index([firmId])
   @@index([caseId])
