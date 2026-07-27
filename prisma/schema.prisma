@@ -18,8 +18,8 @@ model Firm {
   id                 String   @id @default(cuid())
   name               String
   plan               String   @default("trial") // trial | active | canceled
-  paymentCustomerId     String? // Dodo Payments customer_id
-  paymentSubscriptionId String? // Dodo Payments subscription_id
+  paymentCustomerId     String? // Paddle customer_id
+  paymentSubscriptionId String? // Paddle subscription_id
   reminderDaysBefore String   @default("30,14,7,1") // comma-separated day offsets
   onboardingDismissed Boolean @default(false)
   createdAt          DateTime @default(now())
