@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import LogoutButton from "./LogoutButton";
+import GlobalSearch from "./GlobalSearch";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -32,13 +33,25 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <Link href="/dashboard/cases" className="hover:text-white">
                 Cases
               </Link>
+              <Link href="/dashboard/tasks" className="hover:text-white">
+                Tasks
+              </Link>
+              <Link href="/dashboard/calendar" className="hover:text-white">
+                Calendar
+              </Link>
+              <Link href="/dashboard/activity" className="hover:text-white">
+                Activity
+              </Link>
               <Link href="/dashboard/settings" className="hover:text-white">
                 Settings
               </Link>
             </div>
           </div>
+          <div className="hidden md:block flex-1 max-w-xs mx-4">
+            <GlobalSearch />
+          </div>
           <div className="flex items-center gap-3 text-sm">
-            <span className="text-slate-400 hidden md:inline">
+            <span className="text-slate-400 hidden lg:inline">
               {user.firm.name} · {user.name}
             </span>
             <LogoutButton />
