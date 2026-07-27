@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import PaddleCheckoutButton from "./PaddleCheckoutButton";
 
 type Team = { id: string; name: string; email: string; role: string; createdAt: string }[];
 
@@ -7,10 +8,12 @@ export default function SettingsPanel({
   firm,
   team,
   isAdmin,
+  userEmail,
 }: {
   firm: { id: string; name: string; plan: string; reminderDaysBefore: string };
   team: Team;
   isAdmin: boolean;
+  userEmail: string;
 }) {
   const [firmName, setFirmName] = useState(firm.name);
   const [reminderDays, setReminderDays] = useState(firm.reminderDaysBefore);
@@ -22,9 +25,6 @@ export default function SettingsPanel({
   const [inviting, setInviting] = useState(false);
   const [inviteResult, setInviteResult] = useState<{ email: string; tempPassword: string } | null>(null);
   const [inviteError, setInviteError] = useState("");
-
-  const [billingLoading, setBillingLoading] = useState(false);
-  const [billingError, setBillingError] = useState("");
 
   async function saveFirm(e: React.FormEvent) {
     e.preventDefault();
@@ -58,19 +58,6 @@ export default function SettingsPanel({
     setMembers((prev) => [...prev, { id: data.id, name: data.name, email: data.email, role: data.role, createdAt: new Date().toISOString() }]);
     setInviteResult({ email: data.email, tempPassword: data.tempPassword });
     setInviteForm({ name: "", email: "", role: "ATTORNEY" });
-  }
-
-  async function startCheckout() {
-    setBillingLoading(true);
-    setBillingError("");
-    const res = await fetch("/api/billing/checkout", { method: "POST" });
-    const data = await res.json();
-    setBillingLoading(false);
-    if (!res.ok) {
-      setBillingError(data.error || "Could not start checkout.");
-      return;
-    }
-    window.location.href = data.url;
   }
 
   return (
@@ -176,16 +163,7 @@ export default function SettingsPanel({
         <p className="text-sm text-slate-500 mb-4">
           Current plan: <span className="font-medium text-slate-900">{firm.plan}</span>
         </p>
-        {isAdmin && (
-          <button
-            onClick={startCheckout}
-            disabled={billingLoading}
-            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-semibold px-4 py-2 rounded-md"
-          >
-            {billingLoading ? "Redirecting..." : "Upgrade plan"}
-          </button>
-        )}
-        {billingError && <p className="text-sm text-red-600 mt-2">{billingError}</p>}
+        {isAdmin && <PaddleCheckoutButton firmId={firm.id} customerEmail={userEmail} />}
       </section>
     </div>
   );
