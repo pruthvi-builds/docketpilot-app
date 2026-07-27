@@ -26,6 +26,7 @@ model Firm {
   users   User[]
   cases   Case[]
   activity ActivityLog[]
+  tasks   Task[]
 }
 
 model User {
@@ -51,6 +52,7 @@ model Case {
   createdAt  DateTime @default(now())
 
   deadlines Deadline[]
+  tasks     Task[]
 
   @@index([firmId])
 }
@@ -79,4 +81,20 @@ model ActivityLog {
   createdAt DateTime @default(now())
 
   @@index([firmId])
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  firmId    String
+  firm      Firm      @relation(fields: [firmId], references: [id])
+  caseId    String?
+  case      Case?     @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  title     String
+  priority  String    @default("MEDIUM") // LOW | MEDIUM | HIGH
+  dueDate   DateTime?
+  done      Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  @@index([firmId])
+  @@index([caseId])
 }
