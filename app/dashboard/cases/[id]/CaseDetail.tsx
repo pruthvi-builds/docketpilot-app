@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DeadlineWizard from "./DeadlineWizard";
+import ExtractDeadlinesModal from "./ExtractDeadlinesModal";
 
 type Deadline = { id: string; type: string; dueDate: string; notes: string | null; completed: boolean };
 type CaseDocument = { id: string; filename: string; size: number; uploadedAt: string };
@@ -42,6 +43,7 @@ export default function CaseDetail({ initialCase }: { initialCase: CaseData }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showWizard, setShowWizard] = useState(false);
+  const [showExtract, setShowExtract] = useState(false);
 
   function openAdd() {
     setEditingId(null);
@@ -188,6 +190,9 @@ export default function CaseDetail({ initialCase }: { initialCase: CaseData }) {
           <button onClick={() => setShowWizard(true)} className="bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-50 text-sm font-semibold px-4 py-2 rounded-md">
             ⚡ Deadline Wizard
           </button>
+          <button onClick={() => setShowExtract(true)} className="bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-50 text-sm font-semibold px-4 py-2 rounded-md">
+            📋 Extract from Text
+          </button>
           <button onClick={openAdd} className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-md">
             + Add Deadline
           </button>
@@ -314,6 +319,19 @@ export default function CaseDetail({ initialCase }: { initialCase: CaseData }) {
         <DeadlineWizard
           caseId={data.id}
           onClose={() => setShowWizard(false)}
+          onCreated={(created) =>
+            setData((prev) => ({
+              ...prev,
+              deadlines: [...prev.deadlines, ...created].sort((a, b) => a.dueDate.localeCompare(b.dueDate)),
+            }))
+          }
+        />
+      )}
+
+      {showExtract && (
+        <ExtractDeadlinesModal
+          caseId={data.id}
+          onClose={() => setShowExtract(false)}
           onCreated={(created) =>
             setData((prev) => ({
               ...prev,
