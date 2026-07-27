@@ -21,6 +21,7 @@ model Firm {
   paymentCustomerId     String? // Dodo Payments customer_id
   paymentSubscriptionId String? // Dodo Payments subscription_id
   reminderDaysBefore String   @default("30,14,7,1") // comma-separated day offsets
+  onboardingDismissed Boolean @default(false)
   createdAt          DateTime @default(now())
 
   users   User[]
