@@ -43,12 +43,20 @@ export default function LandingPage() {
               <span className="w-2 h-2 rounded-full bg-green-400" /> Set up in under 5 minutes
             </div>
           </div>
-          <Link
-            href="/signup"
-            className="inline-block mt-8 bg-white text-slate-900 font-semibold px-5 py-2.5 rounded-md hover:bg-slate-200 transition"
-          >
-            Start your free trial
-          </Link>
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <Link
+              href="/signup"
+              className="inline-block bg-white text-slate-900 font-semibold px-5 py-2.5 rounded-md hover:bg-slate-200 transition"
+            >
+              Start your free trial
+            </Link>
+            <a
+              href="/api/demo/login"
+              className="inline-block border border-slate-500 text-slate-200 font-semibold px-5 py-2.5 rounded-md hover:bg-slate-800 transition"
+            >
+              View live demo
+            </a>
+          </div>
         </div>
       </header>
 
@@ -68,7 +76,10 @@ export default function LandingPage() {
       </main>
 
       <footer className="text-center text-xs text-slate-400 py-10 border-t border-slate-200">
-        © {new Date().getFullYear()} DocketPilot
+        © {new Date().getFullYear()} DocketPilot ·{" "}
+        <Link href="/security" className="text-slate-500 hover:text-slate-700 underline">
+          Security &amp; data practices
+        </Link>
       </footer>
     </div>
   );
