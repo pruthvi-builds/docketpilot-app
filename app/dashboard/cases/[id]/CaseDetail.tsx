@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import DeadlineWizard from "./DeadlineWizard";
 
 type Deadline = { id: string; type: string; dueDate: string; notes: string | null; completed: boolean };
 type CaseDocument = { id: string; filename: string; size: number; uploadedAt: string };
@@ -40,6 +41,7 @@ export default function CaseDetail({ initialCase }: { initialCase: CaseData }) {
   const [documents, setDocuments] = useState(initialCase.documents);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [showWizard, setShowWizard] = useState(false);
 
   function openAdd() {
     setEditingId(null);
@@ -182,9 +184,14 @@ export default function CaseDetail({ initialCase }: { initialCase: CaseData }) {
 
       <div className="flex justify-between items-center mb-3">
         <h2 className="font-semibold text-slate-900">Deadlines</h2>
-        <button onClick={openAdd} className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-md">
-          + Add Deadline
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setShowWizard(true)} className="bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-50 text-sm font-semibold px-4 py-2 rounded-md">
+            ⚡ Deadline Wizard
+          </button>
+          <button onClick={openAdd} className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-md">
+            + Add Deadline
+          </button>
+        </div>
       </div>
 
       <div className="space-y-3">
@@ -301,6 +308,19 @@ export default function CaseDetail({ initialCase }: { initialCase: CaseData }) {
             </form>
           </div>
         </div>
+      )}
+
+      {showWizard && (
+        <DeadlineWizard
+          caseId={data.id}
+          onClose={() => setShowWizard(false)}
+          onCreated={(created) =>
+            setData((prev) => ({
+              ...prev,
+              deadlines: [...prev.deadlines, ...created].sort((a, b) => a.dueDate.localeCompare(b.dueDate)),
+            }))
+          }
+        />
       )}
     </div>
   );
