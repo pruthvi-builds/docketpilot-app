@@ -160,8 +160,11 @@ export default function SettingsPanel({
 
       <section className="bg-white border border-slate-200 rounded-lg p-6">
         <h2 className="font-semibold text-slate-900 mb-2">Billing</h2>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-slate-500 mb-1">
           Current plan: <span className="font-medium text-slate-900">{firm.plan}</span>
+        </p>
+        <p className="text-sm text-slate-500 mb-4">
+          DocketPilot Pro is <span className="font-medium text-slate-900">$9/month</span> per firm, billed monthly. Cancel anytime.
         </p>
         {isAdmin && <PaddleCheckoutButton firmId={firm.id} customerEmail={userEmail} />}
       </section>
