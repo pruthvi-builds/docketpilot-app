@@ -80,6 +80,18 @@ export default function LandingPage() {
         <Link href="/security" className="text-slate-500 hover:text-slate-700 underline">
           Security &amp; data practices
         </Link>
+        {" "}·{" "}
+        <Link href="/terms" className="text-slate-500 hover:text-slate-700 underline">
+          Terms of Service
+        </Link>
+        {" "}·{" "}
+        <Link href="/privacy" className="text-slate-500 hover:text-slate-700 underline">
+          Privacy Policy
+        </Link>
+        {" "}·{" "}
+        <Link href="/refund-policy" className="text-slate-500 hover:text-slate-700 underline">
+          Refund Policy
+        </Link>
       </footer>
     </div>
   );
