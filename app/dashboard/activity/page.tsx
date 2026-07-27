@@ -12,6 +12,8 @@ const ACTION_LABELS: Record<string, string> = {
   "task.created": "added a task",
   "task.updated": "updated a task",
   "task.deleted": "deleted a task",
+  "document.uploaded": "uploaded a document",
+  "document.deleted": "deleted a document",
   "team.invited": "invited a team member",
 };
 
@@ -31,7 +33,7 @@ function timeAgo(date: Date) {
     value = Math.floor(value / size);
     unit = name;
   }
-  return value <= 1 && unit === "second" ? "just now" : value + " " + unit + (value === 1 ? "" : "s") + " ago";
+  return value <= 1 && unit === "second" ? "just now" : `${value} ${unit}${value === 1 ? "" : "s"} ago`;
 }
 
 export default async function ActivityPage() {
