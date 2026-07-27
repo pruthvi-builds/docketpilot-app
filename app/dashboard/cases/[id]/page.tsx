@@ -7,7 +7,10 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
   const session = await getSession();
   const caseRecord = await prisma.case.findFirst({
     where: { id: params.id, firmId: session!.firmId },
-    include: { deadlines: { orderBy: { dueDate: "asc" } } },
+    include: {
+      deadlines: { orderBy: { dueDate: "asc" } },
+      documents: { orderBy: { uploadedAt: "desc" } },
+    },
   });
   if (!caseRecord) notFound();
 
@@ -24,6 +27,12 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
       dueDate: d.dueDate.toISOString().slice(0, 10),
       notes: d.notes,
       completed: d.completed,
+    })),
+    documents: caseRecord.documents.map((doc) => ({
+      id: doc.id,
+      filename: doc.filename,
+      size: doc.size,
+      uploadedAt: doc.uploadedAt.toISOString(),
     })),
   };
 
