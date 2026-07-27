@@ -19,9 +19,9 @@ Deadline &amp; case-date tracker for solo and small law firms. Multi-tenant SaaS
 Nothing above requires external services. These two do:
 
 - **Email reminders** — the reminder engine and cron endpoint are fully built and tested (`/api/cron/send-reminders`, protected by `CRON_SECRET`). Without `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` set, it still runs correctly and just logs the email to the server console instead of sending it. Add real SMTP credentials (Gmail app password, Resend, Postmark, SES, etc.) in `.env` to start actually sending.
-- **Billing** — uses Dodo Payments (a merchant-of-record processor) instead of Stripe, since Stripe is invite-only for India-based accounts. Checkout + webhook routes are built (`/api/billing/checkout`, `/api/billing/webhook`), verified with the Standard Webhooks spec. Without `DODO_PAYMENTS_API_KEY`/`DODO_PRODUCT_ID`/`DODO_WEBHOOK_SECRET`, the Upgrade button returns a clear "billing not configured" message instead of erroring. Dodo has no monthly/setup fee — just ~4.5%+40¢ per transaction — and settles in INR with no cross-border headache. Add your own keys when you're ready to charge.
+- **Billing** — uses Paddle (a merchant-of-record processor) instead of Stripe/Razorpay, since Stripe is invite-only for India-based accounts and Razorpay's international billing still requires a registered business entity. Paddle explicitly supports India-based individuals with no company registration and no upfront cost. Checkout is a client-side Paddle.js overlay (`PaddleCheckoutButton.tsx`, no server round-trip needed to start it); the webhook route (`/api/billing/webhook`) verifies Paddle's signature scheme via `@paddle/paddle-node-sdk`. Without `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`/`NEXT_PUBLIC_PADDLE_PRICE_ID`, the Upgrade button shows a clear "billing not configured" message instead of erroring. Add your own keys when you're ready to charge.
 
-I did not create Dodo Payments/SMTP accounts or enter any credentials on your behalf — that's intentionally left for you to wire up with your own accounts.
+I did not create the Paddle/SMTP accounts or enter any credentials on your behalf — that's intentionally left for you to wire up with your own accounts.
 
 ## Run it locally
 
@@ -45,6 +45,6 @@ Seeded demo login (if you ran `db:seed`): `demo@docketpilot.app` / `password123`
 ## Suggested next steps before cold-emailing prospects
 
 1. Deploy to Vercel with a real Postgres database attached.
-2. Wire up real SMTP + Dodo Payments keys.
+2. Wire up real SMTP + Paddle keys.
 3. Run the landing page + a small batch of cold emails into solo/small-firm attorney lists (state bar directories) to validate willingness to pay before investing further — the pitch is already on the homepage (`app/page.tsx`).
 4. Nice-to-haves once validated: password reset flow, 2FA, Google/Outlook calendar sync (beyond one-off `.ics` downloads), mobile-friendly SMS reminders, per-user (not just per-firm) notification preferences.
