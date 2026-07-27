@@ -57,6 +57,11 @@ export default function LandingPage() {
               View live demo
             </a>
           </div>
+          <p className="mt-4 text-sm text-slate-400">
+            Just{" "}
+            <span className="text-white font-semibold">$9/month</span> per firm after your free trial.
+            No setup fees, no per-seat pricing, cancel anytime.
+          </p>
         </div>
       </header>
 
