@@ -79,8 +79,8 @@ export default function LandingPage() {
   return (
     <div className="bg-white">
       {/* Header */}
-      <header className="bg-slate-900 text-white sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="bg-slate-900 text-white">
+        <div className="sticky top-0 z-40 bg-slate-900 max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded bg-indigo-500 flex items-center justify-center font-bold">
               DP
