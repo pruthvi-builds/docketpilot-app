@@ -68,6 +68,17 @@ export default function LoginPage() {
             Start free trial
           </Link>
         </p>
+        <p className="text-sm text-slate-500 mt-2 text-center">
+          <a href="/api/demo/login" className="text-indigo-600 font-medium">
+            View a live demo
+          </a>{" "}
+          instead — no signup needed.
+        </p>
+        <p className="text-xs text-slate-400 mt-4 text-center">
+          <Link href="/security" className="hover:text-slate-600 underline">
+            Security &amp; data practices
+          </Link>
+        </p>
       </div>
     </div>
   );
