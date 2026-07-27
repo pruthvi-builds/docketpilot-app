@@ -117,3 +117,15 @@ model Document {
   @@index([firmId])
   @@index([caseId])
 }
+
+// Public lead-capture for firms interested in an eventual Enterprise/BigLaw
+// tier (SSO, per-matter permissions, security review). No auth required to
+// submit — this is a marketing waitlist, not a tenant.
+model EnterpriseLead {
+  id        String   @id @default(cuid())
+  firmName  String
+  email     String
+  firmSize  String?
+  message   String?
+  createdAt DateTime @default(now())
+}
