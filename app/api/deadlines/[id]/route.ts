@@ -20,7 +20,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   if (body.type !== undefined) data.type = body.type;
   if (body.dueDate !== undefined) data.dueDate = new Date(body.dueDate);
   if (body.notes !== undefined) data.notes = body.notes?.trim() || null;
-  if (body.completed !== undefined) data.completed = Boolean(body.completed);
+  if (body.completed !== undefined) {
+    data.completed = Boolean(body.completed);
+    // Record when it was actually marked done (or clear it if reopened) so the
+    // Compliance Certificate can report a real on-time completion rate later.
+    data.completedAt = data.completed ? new Date() : null;
+  }
   // Editing the date invalidates previously-sent reminder tracking so new thresholds re-fire correctly.
   if (body.dueDate !== undefined) data.remindersSentDays = "";
 
