@@ -12,6 +12,10 @@ import { sendPush } from "@/lib/push";
  * configured reminder thresholds (Firm.reminderDaysBefore, e.g. "30,14,7,1").
  * Sends one email per threshold crossed, and records it on the deadline so the
  * same reminder never fires twice.
+ *
+ * Email sends are best-effort: a failure for one recipient (bad address,
+ * provider rejection, etc.) is logged and skipped rather than aborting the
+ * whole run, so one bad address can't block reminders for every other firm.
  */
 export async function POST(req: NextRequest) {
   const auth = req.headers.get("authorization");
@@ -32,6 +36,7 @@ export async function POST(req: NextRequest) {
   });
 
   let sent = 0;
+  let failed = 0;
 
   for (const firm of firms) {
     const thresholds = firm.reminderDaysBefore
@@ -64,19 +69,28 @@ export async function POST(req: NextRequest) {
         });
 
         for (const to of recipients) {
-          await sendEmail(to, `Deadline reminder: ${c.clientName} — ${d.type}`, html);
+          try {
+            await sendEmail(to, `Deadline reminder: ${c.clientName} — ${d.type}`, html);
+          } catch (err) {
+            failed += 1;
+            console.error(`[send-reminders] Failed to email ${to} for ${c.clientName} — ${d.type}:`, err);
+          }
         }
 
         for (const sub of pushSubs) {
-          await sendPush(
-            sub,
-            {
-              title: `Deadline: ${c.clientName}`,
-              body: `${d.type} — ${matchedThreshold === 0 ? "due today" : `${matchedThreshold} day${matchedThreshold === 1 ? "" : "s"} away`}`,
-              url: "/dashboard",
-            },
-            (id) => prisma.pushSubscription.delete({ where: { id } }).then(() => undefined)
-          );
+          try {
+            await sendPush(
+              sub,
+              {
+                title: `Deadline: ${c.clientName}`,
+                body: `${d.type} — ${matchedThreshold === 0 ? "due today" : `${matchedThreshold} day${matchedThreshold === 1 ? "" : "s"} away`}`,
+                url: "/dashboard",
+              },
+              (id) => prisma.pushSubscription.delete({ where: { id } }).then(() => undefined)
+            );
+          } catch (err) {
+            console.error(`[send-reminders] Failed to push-notify for ${c.clientName} — ${d.type}:`, err);
+          }
         }
 
         await prisma.deadline.update({
@@ -91,5 +105,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, remindersSent: sent });
+  return NextResponse.json({ ok: true, remindersSent: sent, failedSends: failed });
 }
