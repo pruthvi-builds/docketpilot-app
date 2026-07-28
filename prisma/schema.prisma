@@ -68,6 +68,7 @@ model Deadline {
   dueDate           DateTime
   notes             String?
   completed         Boolean  @default(false)
+  completedAt       DateTime? // set automatically when `completed` flips true; cleared if reopened
   remindersSentDays String   @default("") // comma-separated day offsets already emailed
   createdAt         DateTime @default(now())
 
