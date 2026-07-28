@@ -2,14 +2,15 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import SettingsPanel from "./SettingsPanel";
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ searchParams }: { searchParams?: { calendar?: string } }) {
   const session = await getSession();
-  const [firm, currentUser] = await Promise.all([
+  const [firm, currentUser, googleConnection] = await Promise.all([
     prisma.firm.findUnique({
       where: { id: session!.firmId },
       include: { users: { select: { id: true, name: true, email: true, role: true, createdAt: true } } },
     }),
     prisma.user.findUnique({ where: { id: session!.userId }, select: { email: true } }),
+    prisma.googleCalendarConnection.findUnique({ where: { userId: session!.userId } }),
   ]);
   if (!firm) return null;
 
@@ -19,6 +20,8 @@ export default async function SettingsPage() {
       team={firm.users.map((u) => ({ ...u, createdAt: u.createdAt.toISOString() }))}
       isAdmin={session!.role === "ADMIN"}
       userEmail={currentUser?.email || ""}
+      googleCalendarConnected={Boolean(googleConnection)}
+      calendarStatus={searchParams?.calendar}
     />
   );
 }
