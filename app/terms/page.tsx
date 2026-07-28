@@ -47,7 +47,7 @@ export default function TermsPage() {
         <h2>3. Subscriptions, billing, and cancellation</h2>
         <p>
           Paid plans are billed in advance on a recurring monthly basis through our payment processor,
-          Paddle.com, which acts as merchant of record for all purchases. You can cancel your
+          Dodo Payments, which acts as merchant of record for all purchases. You can cancel your
           subscription at any time from your account settings; cancellation takes effect at the end of
           the current billing period, and no further charges will occur after that. See our{" "}
           <Link href="/refund-policy" className="underline">Refund Policy</Link> for details on refunds.
