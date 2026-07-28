@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import PaddleCheckoutButton from "./PaddleCheckoutButton";
+import PushNotificationToggle from "./PushNotificationToggle";
 
 type Team = { id: string; name: string; email: string; role: string; createdAt: string }[];
 
@@ -96,6 +97,11 @@ export default function SettingsPanel({
             </button>
           )}
         </form>
+      </section>
+
+      <section className="bg-white border border-slate-200 rounded-lg p-6">
+        <h2 className="font-semibold text-slate-900 mb-4">Browser notifications</h2>
+        <PushNotificationToggle />
       </section>
 
       <section className="bg-white border border-slate-200 rounded-lg p-6">
