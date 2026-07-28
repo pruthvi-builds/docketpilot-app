@@ -25,7 +25,7 @@ export default function RefundPolicyPage() {
 
         <p>
           Subscriptions to DocketPilot are billed and processed by our payment processor,{" "}
-          Paddle.com, acting as the merchant of record. This policy explains when refunds are
+          Dodo Payments, acting as the merchant of record. This policy explains when refunds are
           available.
         </p>
 
@@ -49,12 +49,12 @@ export default function RefundPolicyPage() {
           the charge at{" "}
           <a href="mailto:billing@docketpilot.app" className="underline">billing@docketpilot.app</a>{" "}
           with your account email and the date of the charge. We review refund requests case by case
-          and will issue a refund through Paddle where appropriate.
+          and will issue a refund through Dodo Payments where appropriate.
         </p>
 
         <h2>4. How refunds are processed</h2>
         <p>
-          Approved refunds are issued to the original payment method via Paddle, our merchant of
+          Approved refunds are issued to the original payment method via Dodo Payments, our merchant of
           record, and typically appear within 5–10 business days depending on your bank or card issuer.
         </p>
 
