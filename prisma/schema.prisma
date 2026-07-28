@@ -130,3 +130,17 @@ model EnterpriseLead {
   message   String?
   createdAt DateTime @default(now())
 }
+
+// Web Push (VAPID) subscriptions for browser deadline-reminder notifications —
+// a free alternative to paid SMS reminders. One row per browser/device a user
+// has enabled notifications on; endpoint is the browser's unique push URL.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
