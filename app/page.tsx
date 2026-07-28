@@ -1,5 +1,6 @@
 import Link from "next/link";
 import FaqAccordion from "./FaqAccordion";
+import EnterpriseWaitlistForm from "./EnterpriseWaitlistForm";
 
 const COMPETITORS = [
   { name: "DocketPilot", price: 9, display: "$9", note: "flat / firm", highlight: true },
@@ -311,6 +312,18 @@ export default function LandingPage() {
         <p className="text-center mt-6 text-sm text-slate-500">
           <Link href="/security" className="text-indigo-600 underline">Security &amp; data practices →</Link>
         </p>
+      </section>
+
+      {/* Enterprise / BigLaw waitlist */}
+      <section id="enterprise" className="max-w-3xl mx-auto px-6 py-16">
+        <div className="text-center max-w-xl mx-auto mb-8">
+          <span className="text-[10px] font-bold uppercase tracking-wide bg-slate-900 text-white px-2 py-1 rounded-full">Coming soon</span>
+          <h2 className="mt-4 text-2xl md:text-3xl font-bold text-slate-900">Built small. Built to scale to BigLaw.</h2>
+          <p className="mt-2 text-slate-500 text-sm">
+            SSO, per-matter permissions, and a security review — for firms bigger than 10 attorneys. Join the waitlist and we&apos;ll reach out first.
+          </p>
+        </div>
+        <EnterpriseWaitlistForm />
       </section>
 
       {/* FAQ */}
