@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendEmail, reminderEmailHtml } from "@/lib/mailer";
 import { daysUntil } from "@/lib/urgency";
+import { sendPush } from "@/lib/push";
 
 /**
  * Daily reminder sweep. Trigger this once a day (Vercel Cron, or any scheduler)
@@ -40,6 +41,10 @@ export async function POST(req: NextRequest) {
     const recipients = firm.users.map((u) => u.email);
     if (recipients.length === 0) continue;
 
+    const pushSubs = await prisma.pushSubscription.findMany({
+      where: { userId: { in: firm.users.map((u) => u.id) } },
+    });
+
     for (const c of firm.cases) {
       for (const d of c.deadlines) {
         const days = daysUntil(d.dueDate);
@@ -60,6 +65,18 @@ export async function POST(req: NextRequest) {
 
         for (const to of recipients) {
           await sendEmail(to, `Deadline reminder: ${c.clientName} — ${d.type}`, html);
+        }
+
+        for (const sub of pushSubs) {
+          await sendPush(
+            sub,
+            {
+              title: `Deadline: ${c.clientName}`,
+              body: `${d.type} — ${matchedThreshold === 0 ? "due today" : `${matchedThreshold} day${matchedThreshold === 1 ? "" : "s"} away`}`,
+              url: "/dashboard",
+            },
+            (id) => prisma.pushSubscription.delete({ where: { id } }).then(() => undefined)
+          );
         }
 
         await prisma.deadline.update({
