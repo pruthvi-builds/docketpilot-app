@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-screen">
-      <nav className="bg-slate-900 text-white">
+      <nav className="bg-slate-900 text-white print:hidden">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="flex items-center gap-2">
@@ -41,6 +41,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </Link>
               <Link href="/dashboard/activity" className="hover:text-white">
                 Activity
+              </Link>
+              <Link href="/dashboard/compliance" className="hover:text-white">
+                Compliance
               </Link>
               <Link href="/dashboard/settings" className="hover:text-white">
                 Settings
