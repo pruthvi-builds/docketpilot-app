@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { pushDeadlineToGoogleCalendar, removeDeadlineFromGoogleCalendar } from "@/lib/googleCalendar";
 
 async function findOwned(id: string, firmId: string) {
   return prisma.deadline.findFirst({
@@ -35,6 +36,15 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     data: { firmId: session.firmId, userId: session.userId, action: "deadline.updated", detail: updated.type },
   });
 
+  await pushDeadlineToGoogleCalendar(session.userId, {
+    id: updated.id,
+    type: updated.type,
+    dueDate: updated.dueDate,
+    notes: updated.notes,
+    clientName: existing.case.clientName,
+    caseNumber: existing.case.caseNumber,
+  });
+
   return NextResponse.json({
     id: updated.id,
     type: updated.type,
@@ -55,6 +65,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   await prisma.activityLog.create({
     data: { firmId: session.firmId, userId: session.userId, action: "deadline.deleted", detail: existing.type },
   });
+
+  await removeDeadlineFromGoogleCalendar(session.userId, params.id);
 
   return NextResponse.json({ ok: true });
 }
