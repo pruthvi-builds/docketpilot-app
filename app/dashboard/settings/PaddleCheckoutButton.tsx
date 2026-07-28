@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
-import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 
-// Paddle.js overlay checkout — runs entirely client-side, no server round-trip
-// needed to start a session (unlike the old Dodo redirect-based flow). Reads
-// its config from NEXT_PUBLIC_* env vars, which Next.js inlines at build time.
-export default function PaddleCheckoutButton({
+// Dodo Payments checkout — server creates the session (POST /api/billing/checkout),
+// we just redirect the browser to the returned checkout_url. No client SDK needed.
+export default function CheckoutButton({
   firmId,
   customerEmail,
 }: {
@@ -15,28 +13,16 @@ export default function PaddleCheckoutButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const clientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-  const priceId = process.env.NEXT_PUBLIC_PADDLE_PRICE_ID;
-  const environment = (process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT as "sandbox" | "production") || "sandbox";
-
   async function startCheckout() {
-    if (!clientToken || !priceId) {
-      setError("Billing isn't configured yet. Add NEXT_PUBLIC_PADDLE_CLIENT_TOKEN and NEXT_PUBLIC_PADDLE_PRICE_ID to your environment.");
-      return;
-    }
     setLoading(true);
     setError("");
     try {
-      const paddle: Paddle | undefined = await initializePaddle({ token: clientToken, environment });
-      if (!paddle) throw new Error("Could not initialize Paddle.");
-      paddle.Checkout.open({
-        items: [{ priceId, quantity: 1 }],
-        customer: { email: customerEmail },
-        customData: { firmId },
-      });
+      const res = await fetch("/api/billing/checkout", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Could not start checkout.");
+      window.location.href = data.url;
     } catch (err: any) {
       setError(err?.message || "Could not start checkout.");
-    } finally {
       setLoading(false);
     }
   }
