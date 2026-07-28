@@ -41,7 +41,7 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Billing information</strong> — subscription status and plan tier. Card and payment
-            details are collected and processed directly by our payment processor, Paddle.com; we do
+            details are collected and processed directly by our payment processor, Dodo Payments; we do
             not receive or store your full card number.
           </li>
           <li>
@@ -55,7 +55,7 @@ export default function PrivacyPage() {
         <ul>
           <li>Provide and maintain the DocketPilot service, including sending deadline reminder emails you configure.</li>
           <li>Authenticate your account and keep your firm&apos;s data isolated from other firms.</li>
-          <li>Process subscription billing through Paddle.</li>
+          <li>Process subscription billing through Dodo Payments.</li>
           <li>Respond to support requests and improve the product.</li>
         </ul>
 
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
         <ul>
           <li>Our hosting and database provider, to run the application.</li>
           <li>Our email delivery provider, to send deadline reminder and account emails.</li>
-          <li>Paddle.com, our payment processor and merchant of record, to process subscription payments.</li>
+          <li>Dodo Payments, our payment processor and merchant of record, to process subscription payments.</li>
         </ul>
         <p>We may also disclose information if required by law or to protect the rights and safety of our users.</p>
 
