@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { pushDeadlineToGoogleCalendar } from "@/lib/googleCalendar";
 
 const VALID_TYPES = ["Filing Deadline", "Hearing Date", "Statute of Limitations", "Discovery Cutoff", "Other"];
 
@@ -46,6 +47,18 @@ export async function POST(req: NextRequest) {
   await prisma.activityLog.create({
     data: { firmId: session.firmId, userId: session.userId, action: "deadline.created", detail: type },
   });
+
+  const parentCase = await prisma.case.findUnique({ where: { id: caseId } });
+  if (parentCase) {
+    await pushDeadlineToGoogleCalendar(session.userId, {
+      id: deadline.id,
+      type: deadline.type,
+      dueDate: deadline.dueDate,
+      notes: deadline.notes,
+      clientName: parentCase.clientName,
+      caseNumber: parentCase.caseNumber,
+    });
+  }
 
   return NextResponse.json({
     id: deadline.id,
