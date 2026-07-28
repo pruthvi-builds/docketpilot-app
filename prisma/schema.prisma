@@ -144,3 +144,31 @@ model PushSubscription {
 
   @@index([userId])
 }
+
+// One row per user who has connected their personal Google Calendar. We push
+// (create/update/delete) events into a dedicated "DocketPilot Deadlines"
+// calendar we create in their account — never touching their primary
+// calendar's other events. One-way sync only: DocketPilot -> Google, not
+// back. Free (Google Calendar API has no cost for this usage level).
+model GoogleCalendarConnection {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  accessToken  String
+  refreshToken String
+  expiryDate   BigInt // epoch ms, from Google's token response
+  calendarId   String // the dedicated calendar's id (not "primary")
+  createdAt    DateTime @default(now())
+}
+
+// Maps a DocketPilot Deadline to the Google Calendar event id it was pushed
+// to, per connected user, so updates/deletes go to the right event instead of
+// creating duplicates.
+model GoogleCalendarEvent {
+  id         String   @id @default(cuid())
+  deadlineId String
+  userId     String
+  eventId    String
+  createdAt  DateTime @default(now())
+
+  @@unique([deadlineId, userId])
+}
