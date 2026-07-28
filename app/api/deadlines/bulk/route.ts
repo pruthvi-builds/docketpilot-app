@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { pushDeadlineToGoogleCalendar } from "@/lib/googleCalendar";
 
 const VALID_TYPES = ["Filing Deadline", "Hearing Date", "Statute of Limitations", "Discovery Cutoff", "Other"];
 
@@ -49,6 +50,18 @@ export async function POST(req: NextRequest) {
     where: { caseId },
     orderBy: { dueDate: "asc" },
   });
+
+  const newlyCreated = created.filter((d) => toCreate.some((tc: any) => tc.dueDate.getTime() === d.dueDate.getTime() && tc.type === d.type));
+  for (const d of newlyCreated) {
+    await pushDeadlineToGoogleCalendar(session.userId, {
+      id: d.id,
+      type: d.type,
+      dueDate: d.dueDate,
+      notes: d.notes,
+      clientName: owned.clientName,
+      caseNumber: owned.caseNumber,
+    });
+  }
 
   return NextResponse.json(
     created.map((d) => ({
