@@ -1,4 +1,4 @@
-**Live demo:** not yet deployed — runs locally (see below)
+**Live demo:** https://docketpilot-app.vercel.app
 **Tech stack:** Next.js 14 (App Router), TypeScript, Prisma, PostgreSQL/SQLite, Tailwind CSS, JWT auth (Edge middleware), Paddle billing webhooks, deployed via Vercel
 
 Multi-tenant SaaS deadline tracker for law firms. Every firm gets isolated data, JWT-based auth that works inside Next.js Edge middleware, a CSV import pipeline, a cron-driven reminder engine, and billing via Paddle with signed webhook verification.
