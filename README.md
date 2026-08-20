@@ -1,3 +1,8 @@
+**Live demo:** not yet deployed — runs locally (see below)
+**Tech stack:** Next.js 14 (App Router), TypeScript, Prisma, PostgreSQL/SQLite, Tailwind CSS, JWT auth (Edge middleware), Paddle billing webhooks, deployed via Vercel
+
+Multi-tenant SaaS deadline tracker for law firms. Every firm gets isolated data, JWT-based auth that works inside Next.js Edge middleware, a CSV import pipeline, a cron-driven reminder engine, and billing via Paddle with signed webhook verification.
+
 # DocketPilot
 
 Deadline &amp; case-date tracker for solo and small law firms. Multi-tenant SaaS built with Next.js 14 (App Router), Prisma + SQLite, and Tailwind. Verified working end-to-end (signup/login, dashboard, case CRUD, deadline CRUD, calendar export, CSV import, team management, reminder cron, billing scaffold) as of this build.
